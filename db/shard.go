@@ -257,6 +257,7 @@ func (q ShardQuerier) selectCore(ctx context.Context, spanName string, sorted bo
 			continue
 		}
 		h := seriesChunks[i].LsetHash
+
 		if _, ok := seen[h]; ok {
 			// We have seen this series before, skip it for now; we could be smarter and select
 			// chunks appropriately so that we fill in what might be missing but for now skipping is fine

@@ -13,8 +13,8 @@ import (
 	"iter"
 	"maps"
 	"math"
-
 	"slices"
+	"strconv"
 	"sync"
 	"time"
 
@@ -300,7 +300,8 @@ func materializeLabelsV1(ctx context.Context, h *storage.SelectHints, m SelectRe
 
 	if useProjections {
 		for i := range hashes {
-			builders[i].Set(schema.SeriesHashLabel, yoloString(hashes[i].Bytes()))
+			hash := binary.LittleEndian.Uint64(hashes[i].Bytes())
+			builders[i].Set(schema.SeriesHashLabel, strconv.FormatUint(hash, 10))
 		}
 	}
 	return builders, nil

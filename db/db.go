@@ -257,10 +257,10 @@ func (db *DBQueryable) Querier(mint, maxt int64) (storage.Querier, error) {
 		bs = append(bs, blk)
 	}
 
-	// We can honor projections if all blocks that participate in the query
-	// are at least V2. We introduced a labels-hash column in V2 which is
-	// required to be able to still horizontally join series.
-	honorProjections := !slices.ContainsFunc(bs, func(blk *Block) bool {
+	// We can honor projections if no replica labels need to be removed and all
+	// participating blocks are at least V2. The persisted hash includes replica
+	// labels, so it cannot identify the resulting series after they are removed.
+	honorProjections := len(db.replicaLabelNames) == 0 && !slices.ContainsFunc(bs, func(blk *Block) bool {
 		return blk.Meta().Version < schema.V2
 	})
 
